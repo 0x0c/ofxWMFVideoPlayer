@@ -19,7 +19,7 @@
 
 #pragma once
 
-#ifdef WINVER
+#ifdef _MSVC_LANG
 
 #include "linklist.h"
 

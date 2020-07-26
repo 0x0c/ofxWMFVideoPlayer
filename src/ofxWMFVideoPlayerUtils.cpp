@@ -5,7 +5,7 @@
 //
 // Copyright (c) Microsoft Corporation. All rights reserved.
 
-#ifdef WINVER
+#ifdef _MSVC_LANG
 
 #include "ofxWMFVideoPlayerUtils.h"
 #include <assert.h>

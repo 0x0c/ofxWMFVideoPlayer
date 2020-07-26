@@ -1,5 +1,7 @@
 #pragma once
-#ifdef WINVER
+
+#ifdef _MSVC_LANG
+
 //ofxWMFVideoPlayer addon written by Philippe Laulheret for Second Story (secondstory.com)
 //Based upon Windows SDK samples
 //MIT Licensing

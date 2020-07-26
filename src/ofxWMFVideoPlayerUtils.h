@@ -9,7 +9,7 @@
 //
 // Copyright (c) Microsoft Corporation. All rights reserved.
 
-#ifdef WINVER
+#ifdef _MSVC_LANG
 
 #ifndef PLAYER_H
 #define PLAYER_H

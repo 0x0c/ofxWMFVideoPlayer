@@ -19,7 +19,7 @@
 
 #pragma once
 
-#ifdef WINVER
+#ifdef _MSVC_LANG
 
 //#include "glu.h"
 #include "GL/glew.h"

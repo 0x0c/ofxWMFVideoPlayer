@@ -13,7 +13,7 @@
 
 #pragma once
 
-#ifdef WINVER
+#ifdef _MSVC_LANG
 
 #include "logging.h"
 #include <mfidl.h>

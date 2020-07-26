@@ -14,7 +14,7 @@
 
 #pragma once
 
-#ifdef WINVER
+#ifdef _MSVC_LANG
 
 #include <windows.h>
 #include <intsafe.h>
