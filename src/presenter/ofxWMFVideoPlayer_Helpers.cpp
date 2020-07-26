@@ -1,7 +1,7 @@
 //////////////////////////////////////////////////////////////////////////
 //
 // Helpers.cpp : Miscellaneous helpers.
-// 
+//
 // THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF
 // ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO
 // THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A
@@ -12,8 +12,9 @@
 //
 //////////////////////////////////////////////////////////////////////////
 
-#include "EVRPresenter.h"
+#ifdef WINVER
 
+#include "EVRPresenter.h"
 
 //-----------------------------------------------------------------------------
 // SamplePool class
@@ -21,13 +22,11 @@
 
 SamplePool::SamplePool() : m_bInitialized(FALSE), m_cPending(0)
 {
-
 }
 
 SamplePool::~SamplePool()
 {
 }
-
 
 //-----------------------------------------------------------------------------
 // GetSample
@@ -115,14 +114,13 @@ BOOL SamplePool::AreSamplesPending()
 	return (m_cPending > 0);
 }
 
-
 //-----------------------------------------------------------------------------
 // Initialize
 //
 // Initializes the pool with a list of samples.
 //-----------------------------------------------------------------------------
 
-HRESULT SamplePool::Initialize(VideoSampleList& samples)
+HRESULT SamplePool::Initialize(VideoSampleList &samples)
 {
 	AutoLock lock(m_lock);
 
@@ -154,7 +152,6 @@ done:
 	return hr;
 }
 
-
 //-----------------------------------------------------------------------------
 // Clear
 //
@@ -173,3 +170,4 @@ HRESULT SamplePool::Clear()
 	return S_OK;
 }
 
+#endif

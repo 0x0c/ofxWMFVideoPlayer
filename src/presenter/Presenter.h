@@ -1,7 +1,7 @@
 //////////////////////////////////////////////////////////////////////////
 //
 // Presenter.h : Defines the presenter object.
-// 
+//
 // THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF
 // ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO
 // THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A
@@ -12,9 +12,9 @@
 //
 //////////////////////////////////////////////////////////////////////////
 
-
-
 #pragma once
+
+#ifdef WINVER
 
 #include "common/common.h"
 //#include "common/ClassFactory.h"
@@ -24,13 +24,13 @@
 
 using namespace MediaFoundationSamples;
 
-// RENDER_STATE: Defines the state of the presenter. 
+// RENDER_STATE: Defines the state of the presenter.
 enum RENDER_STATE
 {
 	RENDER_STATE_STARTED = 1,
 	RENDER_STATE_STOPPED,
 	RENDER_STATE_PAUSED,
-	RENDER_STATE_SHUTDOWN,  // Initial state. 
+	RENDER_STATE_SHUTDOWN, // Initial state.
 
 	// State transitions:
 
@@ -45,11 +45,11 @@ enum RENDER_STATE
 // FRAMESTEP_STATE: Defines the presenter's state with respect to frame-stepping.
 enum FRAMESTEP_STATE
 {
-	FRAMESTEP_NONE,             // Not frame stepping.
-	FRAMESTEP_WAITING_START,    // Frame stepping, but the clock is not started.
-	FRAMESTEP_PENDING,          // Clock is started. Waiting for samples.
-	FRAMESTEP_SCHEDULED,        // Submitted a sample for rendering.
-	FRAMESTEP_COMPLETE          // Sample was rendered. 
+	FRAMESTEP_NONE,			 // Not frame stepping.
+	FRAMESTEP_WAITING_START, // Frame stepping, but the clock is not started.
+	FRAMESTEP_PENDING,		 // Clock is started. Waiting for samples.
+	FRAMESTEP_SCHEDULED,	 // Submitted a sample for rendering.
+	FRAMESTEP_COMPLETE		 // Sample was rendered.
 
 	// State transitions:
 
@@ -62,82 +62,112 @@ enum FRAMESTEP_STATE
 	// OnClockSetRate( non-zero )       -> NONE
 };
 
-
 //-----------------------------------------------------------------------------
 //  EVRCustomPresenter class
 //  Description: Implements the custom presenter.
 //-----------------------------------------------------------------------------
 
-class EVRCustomPresenter :
-	BaseObject,
-	RefCountedObject,
-	// COM interfaces:
-	public IMFVideoDeviceID,
-	public IMFVideoPresenter, // Inherits IMFClockStateSink
-	public IMFRateSupport,
-	public IMFGetService,
-	public IMFTopologyServiceLookupClient,
-	public IMFVideoDisplayControl
+class EVRCustomPresenter : BaseObject,
+						   RefCountedObject,
+						   // COM interfaces:
+						   public IMFVideoDeviceID,
+						   public IMFVideoPresenter, // Inherits IMFClockStateSink
+						   public IMFRateSupport,
+						   public IMFGetService,
+						   public IMFTopologyServiceLookupClient,
+						   public IMFVideoDisplayControl
 {
 
 public:
-	EVRCustomPresenter(HRESULT& hr); //seems wrong... meh
+	EVRCustomPresenter(HRESULT &hr); //seems wrong... meh
 	static HRESULT CreateInstance(IUnknown *pUnkOuter, REFIID iid, void **ppv);
 
 	// IUnknown methods
-	STDMETHOD(QueryInterface)(REFIID riid, void ** ppv);
-	STDMETHOD_(ULONG, AddRef)();
-	STDMETHOD_(ULONG, Release)();
+	STDMETHOD(QueryInterface)
+	(REFIID riid, void **ppv);
+	STDMETHOD_(ULONG, AddRef)
+	();
+	STDMETHOD_(ULONG, Release)
+	();
 
 	// IMFGetService methods
-	STDMETHOD(GetService)(REFGUID guidService, REFIID riid, LPVOID *ppvObject);
+	STDMETHOD(GetService)
+	(REFGUID guidService, REFIID riid, LPVOID *ppvObject);
 
 	// IMFVideoPresenter methods
-	STDMETHOD(ProcessMessage)(MFVP_MESSAGE_TYPE eMessage, ULONG_PTR ulParam);
-	STDMETHOD(GetCurrentMediaType)(IMFVideoMediaType** ppMediaType);
+	STDMETHOD(ProcessMessage)
+	(MFVP_MESSAGE_TYPE eMessage, ULONG_PTR ulParam);
+	STDMETHOD(GetCurrentMediaType)
+	(IMFVideoMediaType **ppMediaType);
 
 	// IMFClockStateSink methods
-	STDMETHOD(OnClockStart)(MFTIME hnsSystemTime, LONGLONG llClockStartOffset);
-	STDMETHOD(OnClockStop)(MFTIME hnsSystemTime);
-	STDMETHOD(OnClockPause)(MFTIME hnsSystemTime);
-	STDMETHOD(OnClockRestart)(MFTIME hnsSystemTime);
-	STDMETHOD(OnClockSetRate)(MFTIME hnsSystemTime, float flRate);
+	STDMETHOD(OnClockStart)
+	(MFTIME hnsSystemTime, LONGLONG llClockStartOffset);
+	STDMETHOD(OnClockStop)
+	(MFTIME hnsSystemTime);
+	STDMETHOD(OnClockPause)
+	(MFTIME hnsSystemTime);
+	STDMETHOD(OnClockRestart)
+	(MFTIME hnsSystemTime);
+	STDMETHOD(OnClockSetRate)
+	(MFTIME hnsSystemTime, float flRate);
 
 	// IMFRateSupport methods
-	STDMETHOD(GetSlowestRate)(MFRATE_DIRECTION eDirection, BOOL bThin, float *pflRate);
-	STDMETHOD(GetFastestRate)(MFRATE_DIRECTION eDirection, BOOL bThin, float *pflRate);
-	STDMETHOD(IsRateSupported)(BOOL bThin, float flRate, float *pflNearestSupportedRate);
+	STDMETHOD(GetSlowestRate)
+	(MFRATE_DIRECTION eDirection, BOOL bThin, float *pflRate);
+	STDMETHOD(GetFastestRate)
+	(MFRATE_DIRECTION eDirection, BOOL bThin, float *pflRate);
+	STDMETHOD(IsRateSupported)
+	(BOOL bThin, float flRate, float *pflNearestSupportedRate);
 
 	// IMFVideoDeviceID methods
-	STDMETHOD(GetDeviceID)(IID* pDeviceID);
+	STDMETHOD(GetDeviceID)
+	(IID *pDeviceID);
 
 	// IMFTopologyServiceLookupClient methods
-	STDMETHOD(InitServicePointers)(IMFTopologyServiceLookup *pLookup);
-	STDMETHOD(ReleaseServicePointers)();
+	STDMETHOD(InitServicePointers)
+	(IMFTopologyServiceLookup *pLookup);
+	STDMETHOD(ReleaseServicePointers)
+	();
 
 	// IMFVideoDisplayControl methods
-	STDMETHOD(GetNativeVideoSize)(SIZE* pszVideo, SIZE* pszARVideo) { return E_NOTIMPL; }
-	STDMETHOD(GetIdealVideoSize)(SIZE* pszMin, SIZE* pszMax) { return E_NOTIMPL; }
-	STDMETHOD(SetVideoPosition)(const MFVideoNormalizedRect* pnrcSource, const LPRECT prcDest);
-	STDMETHOD(GetVideoPosition)(MFVideoNormalizedRect* pnrcSource, LPRECT prcDest);
-	STDMETHOD(SetAspectRatioMode)(DWORD dwAspectRatioMode) { return E_NOTIMPL; }
-	STDMETHOD(GetAspectRatioMode)(DWORD* pdwAspectRatioMode) { return E_NOTIMPL; }
-	STDMETHOD(SetVideoWindow)(HWND hwndVideo);
-	STDMETHOD(GetVideoWindow)(HWND* phwndVideo);
-	STDMETHOD(RepaintVideo)();
-	STDMETHOD(GetCurrentImage)(BITMAPINFOHEADER* pBih, BYTE** pDib, DWORD* pcbDib, LONGLONG* pTimeStamp) { return E_NOTIMPL; }
-	STDMETHOD(SetBorderColor)(COLORREF Clr) { return E_NOTIMPL; }
-	STDMETHOD(GetBorderColor)(COLORREF* pClr) { return E_NOTIMPL; }
-	STDMETHOD(SetRenderingPrefs)(DWORD dwRenderFlags) { return E_NOTIMPL; }
-	STDMETHOD(GetRenderingPrefs)(DWORD* pdwRenderFlags) { return E_NOTIMPL; }
-	STDMETHOD(SetFullscreen)(BOOL bFullscreen) { return E_NOTIMPL; }
-	STDMETHOD(GetFullscreen)(BOOL* pbFullscreen) { return E_NOTIMPL; }
+	STDMETHOD(GetNativeVideoSize)
+	(SIZE *pszVideo, SIZE *pszARVideo) { return E_NOTIMPL; }
+	STDMETHOD(GetIdealVideoSize)
+	(SIZE *pszMin, SIZE *pszMax) { return E_NOTIMPL; }
+	STDMETHOD(SetVideoPosition)
+	(const MFVideoNormalizedRect *pnrcSource, const LPRECT prcDest);
+	STDMETHOD(GetVideoPosition)
+	(MFVideoNormalizedRect *pnrcSource, LPRECT prcDest);
+	STDMETHOD(SetAspectRatioMode)
+	(DWORD dwAspectRatioMode) { return E_NOTIMPL; }
+	STDMETHOD(GetAspectRatioMode)
+	(DWORD *pdwAspectRatioMode) { return E_NOTIMPL; }
+	STDMETHOD(SetVideoWindow)
+	(HWND hwndVideo);
+	STDMETHOD(GetVideoWindow)
+	(HWND *phwndVideo);
+	STDMETHOD(RepaintVideo)
+	();
+	STDMETHOD(GetCurrentImage)
+	(BITMAPINFOHEADER *pBih, BYTE **pDib, DWORD *pcbDib, LONGLONG *pTimeStamp) { return E_NOTIMPL; }
+	STDMETHOD(SetBorderColor)
+	(COLORREF Clr) { return E_NOTIMPL; }
+	STDMETHOD(GetBorderColor)
+	(COLORREF *pClr) { return E_NOTIMPL; }
+	STDMETHOD(SetRenderingPrefs)
+	(DWORD dwRenderFlags) { return E_NOTIMPL; }
+	STDMETHOD(GetRenderingPrefs)
+	(DWORD *pdwRenderFlags) { return E_NOTIMPL; }
+	STDMETHOD(SetFullscreen)
+	(BOOL bFullscreen) { return E_NOTIMPL; }
+	STDMETHOD(GetFullscreen)
+	(BOOL *pbFullscreen) { return E_NOTIMPL; }
 
 protected:
-
 	virtual ~EVRCustomPresenter();
 
-	// CheckShutdown: 
+	// CheckShutdown:
 	//     Returns MF_E_SHUTDOWN if the presenter is shutdown.
 	//     Call this at the start of any methods that should fail after shutdown.
 	inline HRESULT CheckShutdown() const
@@ -176,7 +206,7 @@ protected:
 	HRESULT ConfigureMixer(IMFTransform *pMixer);
 
 	// Formats
-	HRESULT CreateOptimalVideoType(IMFMediaType* pProposed, IMFMediaType **ppOptimal);
+	HRESULT CreateOptimalVideoType(IMFMediaType *pProposed, IMFMediaType **ppOptimal);
 	HRESULT CalculateOutputRectangle(IMFMediaType *pProposed, RECT *prcOutput);
 	HRESULT SetMediaType(IMFMediaType *pMediaType);
 	HRESULT IsMediaTypeSupported(IMFMediaType *pMediaType);
@@ -190,11 +220,11 @@ protected:
 	HRESULT CheckEndOfStream();
 
 	// Managing samples
-	void    ProcessOutputLoop();
+	void ProcessOutputLoop();
 	HRESULT ProcessOutput();
 	HRESULT DeliverSample(IMFSample *pSample, BOOL bRepaint);
 	HRESULT TrackSample(IMFSample *pSample);
-	void    ReleaseResources();
+	void ReleaseResources();
 
 	// Frame-stepping
 	HRESULT PrepareFrameStep(DWORD cSteps);
@@ -207,11 +237,10 @@ protected:
 
 	// Callback when a video sample is released.
 	HRESULT OnSampleFree(IMFAsyncResult *pResult);
-	AsyncCallback<EVRCustomPresenter>   m_SampleFreeCB;
+	AsyncCallback<EVRCustomPresenter> m_SampleFreeCB;
 
 protected:
-
-	// FrameStep: Holds information related to frame-stepping. 
+	// FrameStep: Holds information related to frame-stepping.
 	// Note: The purpose of this structure is simply to organize the data in one variable.
 	struct FrameStep
 	{
@@ -219,43 +248,40 @@ protected:
 		{
 		}
 
-		FRAMESTEP_STATE     state;          // Current frame-step state.
-		VideoSampleList     samples;        // List of pending samples for frame-stepping.
-		DWORD               steps;          // Number of steps left.
-		DWORD_PTR           pSampleNoRef;   // Identifies the frame-step sample.
+		FRAMESTEP_STATE state;	 // Current frame-step state.
+		VideoSampleList samples; // List of pending samples for frame-stepping.
+		DWORD steps;			 // Number of steps left.
+		DWORD_PTR pSampleNoRef;	 // Identifies the frame-step sample.
 	};
 
-
 protected:
+	RENDER_STATE m_RenderState; // Rendering state.
+	FrameStep m_FrameStep;		// Frame-stepping information.
 
-	RENDER_STATE                m_RenderState;          // Rendering state.
-	FrameStep                   m_FrameStep;            // Frame-stepping information.
-
-	CritSec                     m_ObjectLock;           // Serializes our public methods.  
+	CritSec m_ObjectLock; // Serializes our public methods.
 
 	// Samples and scheduling
-	Scheduler                   m_scheduler;            // Manages scheduling of samples.
-	SamplePool                  m_SamplePool;           // Pool of allocated samples.
-	DWORD                       m_TokenCounter;         // Counter. Incremented whenever we create new samples.
+	Scheduler m_scheduler;	 // Manages scheduling of samples.
+	SamplePool m_SamplePool; // Pool of allocated samples.
+	DWORD m_TokenCounter;	 // Counter. Incremented whenever we create new samples.
 
 	// Rendering state
-	BOOL                        m_bSampleNotify;        // Did the mixer signal it has an input sample?
-	BOOL                        m_bRepaint;             // Do we need to repaint the last sample?
-	BOOL                        m_bPrerolled;           // Have we presented at least one sample?
-	BOOL                        m_bEndStreaming;        // Did we reach the end of the stream (EOS)?
+	BOOL m_bSampleNotify; // Did the mixer signal it has an input sample?
+	BOOL m_bRepaint;	  // Do we need to repaint the last sample?
+	BOOL m_bPrerolled;	  // Have we presented at least one sample?
+	BOOL m_bEndStreaming; // Did we reach the end of the stream (EOS)?
 
-	MFVideoNormalizedRect       m_nrcSource;            // Source rectangle.
-	float                       m_fRate;                // Playback rate.
+	MFVideoNormalizedRect m_nrcSource; // Source rectangle.
+	float m_fRate;					   // Playback rate.
 
 	// Deletable objects.
-	D3DPresentEngine            *m_pD3DPresentEngine;    // Rendering engine. (Never null if the constructor succeeds.)
+	D3DPresentEngine *m_pD3DPresentEngine; // Rendering engine. (Never null if the constructor succeeds.)
 
 	// COM interfaces.
-	IMFClock                    *m_pClock;               // The EVR's clock.
-	IMFTransform                *m_pMixer;               // The mixer.
-	IMediaEventSink             *m_pMediaEventSink;      // The EVR's event-sink interface.
-	IMFMediaType                *m_pMediaType;           // Output media type
-
+	IMFClock *m_pClock;					// The EVR's clock.
+	IMFTransform *m_pMixer;				// The mixer.
+	IMediaEventSink *m_pMediaEventSink; // The EVR's event-sink interface.
+	IMFMediaType *m_pMediaType;			// Output media type
 
 public:
 	HANDLE getSharedDeviceHandle();
@@ -265,4 +291,4 @@ public:
 	void releaseSharedTexture() { return m_pD3DPresentEngine->releaseSharedTexture(); };
 };
 
-
+#endif

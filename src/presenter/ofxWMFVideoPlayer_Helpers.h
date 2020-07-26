@@ -1,7 +1,7 @@
 //////////////////////////////////////////////////////////////////////////
 //
 // Helpers.cpp : Miscellaneous helpers.
-// 
+//
 // THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF
 // ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO
 // THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A
@@ -13,6 +13,8 @@
 //////////////////////////////////////////////////////////////////////////
 
 #pragma once
+
+#ifdef WINVER
 
 //-----------------------------------------------------------------------------
 // SamplePool class
@@ -26,22 +28,21 @@ public:
 	SamplePool();
 	virtual ~SamplePool();
 
-	HRESULT Initialize(VideoSampleList& samples);
+	HRESULT Initialize(VideoSampleList &samples);
 	HRESULT Clear();
 
-	HRESULT GetSample(IMFSample **ppSample);    // Does not block.
+	HRESULT GetSample(IMFSample **ppSample); // Does not block.
 	HRESULT ReturnSample(IMFSample *pSample);
-	BOOL    AreSamplesPending();
+	BOOL AreSamplesPending();
 
 private:
-	CritSec                     m_lock;
+	CritSec m_lock;
 
-	VideoSampleList             m_VideoSampleQueue;         // Available queue
+	VideoSampleList m_VideoSampleQueue; // Available queue
 
-	BOOL                        m_bInitialized;
-	DWORD                       m_cPending;
+	BOOL m_bInitialized;
+	DWORD m_cPending;
 };
-
 
 //-----------------------------------------------------------------------------
 // ThreadSafeQueue template
@@ -49,7 +50,7 @@ private:
 //
 // T: COM interface type.
 //
-// This class is used by the scheduler. 
+// This class is used by the scheduler.
 //
 // Note: This class uses a critical section to protect the state of the queue.
 // With a little work, the scheduler could probably use a lock-free queue.
@@ -90,9 +91,9 @@ public:
 		m_list.Clear();
 	}
 
-
 private:
-	CritSec         m_lock;
-	ComPtrList<T>   m_list;
+	CritSec m_lock;
+	ComPtrList<T> m_list;
 };
 
+#endif

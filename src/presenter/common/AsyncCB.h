@@ -1,12 +1,14 @@
 #pragma once
 
+#ifdef WINVER
+
 namespace MediaFoundationSamples
 {
 
 	//////////////////////////////////////////////////////////////////////////
 	//  AsyncCallback [template]
 	//
-	//  Description: 
+	//  Description:
 	//  Helper class that routes IMFAsyncCallback::Invoke calls to a class
 	//  method on the parent class.
 	//
@@ -24,18 +26,18 @@ namespace MediaFoundationSamples
 	//////////////////////////////////////////////////////////////////////////
 
 	// T: Type of the parent object
-	template<class T>
+	template <class T>
 	class AsyncCallback : public IMFAsyncCallback
 	{
 	public:
-		typedef HRESULT(T::*InvokeFn)(IMFAsyncResult *pAsyncResult);
+		typedef HRESULT (T::*InvokeFn)(IMFAsyncResult *pAsyncResult);
 
 		AsyncCallback(T *pParent, InvokeFn fn) : m_pParent(pParent), m_pInvokeFn(fn)
 		{
 		}
 
 		// IUnknown
-		STDMETHODIMP QueryInterface(REFIID iid, void** ppv)
+		STDMETHODIMP QueryInterface(REFIID iid, void **ppv)
 		{
 			if (!ppv)
 			{
@@ -43,11 +45,11 @@ namespace MediaFoundationSamples
 			}
 			if (iid == __uuidof(IUnknown))
 			{
-				*ppv = static_cast<IUnknown*>(static_cast<IMFAsyncCallback*>(this));
+				*ppv = static_cast<IUnknown *>(static_cast<IMFAsyncCallback *>(this));
 			}
 			else if (iid == __uuidof(IMFAsyncCallback))
 			{
-				*ppv = static_cast<IMFAsyncCallback*>(this);
+				*ppv = static_cast<IMFAsyncCallback *>(this);
 			}
 			else
 			{
@@ -57,24 +59,27 @@ namespace MediaFoundationSamples
 			AddRef();
 			return S_OK;
 		}
-		STDMETHODIMP_(ULONG) AddRef() {
+		STDMETHODIMP_(ULONG)
+		AddRef()
+		{
 			// Delegate to parent class.
 			return m_pParent->AddRef();
 		}
-		STDMETHODIMP_(ULONG) Release() {
+		STDMETHODIMP_(ULONG)
+		Release()
+		{
 			// Delegate to parent class.
 			return m_pParent->Release();
 		}
 
-
 		// IMFAsyncCallback methods
-		STDMETHODIMP GetParameters(DWORD*, DWORD*)
+		STDMETHODIMP GetParameters(DWORD *, DWORD *)
 		{
 			// Implementation of this method is optional.
 			return E_NOTIMPL;
 		}
 
-		STDMETHODIMP Invoke(IMFAsyncResult* pAsyncResult)
+		STDMETHODIMP Invoke(IMFAsyncResult *pAsyncResult)
 		{
 			return (m_pParent->*m_pInvokeFn)(pAsyncResult);
 		}
@@ -84,3 +89,5 @@ namespace MediaFoundationSamples
 	};
 
 }; // namespace MediaFoundationSamples
+
+#endif

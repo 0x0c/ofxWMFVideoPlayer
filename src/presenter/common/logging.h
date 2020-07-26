@@ -1,4 +1,7 @@
 #pragma once
+
+#ifdef WINVER
+
 #include <strsafe.h>
 
 #ifdef _DEBUG
@@ -18,7 +21,7 @@ namespace MediaFoundationSamples
 	//
 	// To enable logging in debug builds, #define USE_LOGGING.
 	// The TRACE_INIT, TRACE, and TRACE_CLOSE macros are mapped to the logging functions.
-	// 
+	//
 	// In retail builds, these macros are mapped to nothing.
 	//--------------------------------------------------------------------------------------
 
@@ -32,7 +35,7 @@ namespace MediaFoundationSamples
 			_CrtSetReportMode(_CRT_WARN, _CRTDBG_MODE_DEBUG);
 		}
 
-		static void  Trace(const WCHAR *sFormatString, ...)
+		static void Trace(const WCHAR *sFormatString, ...)
 		{
 			HRESULT hr = S_OK;
 			va_list va;
@@ -68,8 +71,8 @@ namespace MediaFoundationSamples
 #define TRACE(x) DebugLog::Trace x
 #define TRACE_CLOSE() DebugLog::Close()
 
-// Log HRESULTs on failure.
-	inline HRESULT _LOG_HRESULT(HRESULT hr, const char* sFileName, long lLineNo)
+	// Log HRESULTs on failure.
+	inline HRESULT _LOG_HRESULT(HRESULT hr, const char *sFileName, long lLineNo)
 	{
 		if (FAILED(hr))
 		{
@@ -80,16 +83,21 @@ namespace MediaFoundationSamples
 	}
 
 #define LOG_HRESULT(hr) _LOG_HRESULT(hr, __FILE__, __LINE__)
-#define LOG_MSG_IF_FAILED(msg, hr) if (FAILED(hr)) { TRACE((msg)); }
+#define LOG_MSG_IF_FAILED(msg, hr) \
+	if (FAILED(hr))                \
+	{                              \
+		TRACE((msg));              \
+	}
 
 #else
-#define TRACE_INIT() 
-#define TRACE(x) 
+#define TRACE_INIT()
+#define TRACE(x)
 #define TRACE_CLOSE()
 #define LOG_MSG_IF_FAILED(x, hr)
 #define LOG_HRESULT(hr)
 #define LOG_MSG_IF_FAILED(msg, hr)
 #endif
 
-
 } // namespace MediaFoundationSamples
+
+#endif

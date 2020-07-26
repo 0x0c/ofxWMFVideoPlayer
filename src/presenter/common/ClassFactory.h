@@ -1,9 +1,8 @@
 #pragma once
 
-
+#ifdef WINVER
 
 // Class Factory implementation
-
 
 /*
 
@@ -74,15 +73,14 @@ STDAPI DllCanUnloadNow()
 namespace MediaFoundationSamples
 {
 	// Function pointer for creating COM objects. (Used by the class factory.)
-	typedef HRESULT(*CreateInstanceFn)(IUnknown *pUnkOuter, REFIID iid, void **ppv);
+	typedef HRESULT (*CreateInstanceFn)(IUnknown *pUnkOuter, REFIID iid, void **ppv);
 
 	// Structure to associate CLSID with object creation function.
 	struct ClassFactoryData
 	{
-		const GUID          *pclsid;
-		CreateInstanceFn    pfnCreate;
+		const GUID *pclsid;
+		CreateInstanceFn pfnCreate;
 	};
-
 
 	// ClassFactory:
 	// Implements a class factory for COM objects.
@@ -90,13 +88,12 @@ namespace MediaFoundationSamples
 	class ClassFactory : public IClassFactory
 	{
 	private:
-		volatile long           m_refCount;     // Reference count.
-		static volatile long    m_serverLocks;  // Number of server locks
+		volatile long m_refCount;			// Reference count.
+		static volatile long m_serverLocks; // Number of server locks
 
-		CreateInstanceFn        m_pfnCreation;  // Function to create an instance of the object.
+		CreateInstanceFn m_pfnCreation; // Function to create an instance of the object.
 
 	public:
-
 		ClassFactory(CreateInstanceFn pfnCreation) : m_pfnCreation(pfnCreation), m_refCount(1)
 		{
 		}
@@ -106,11 +103,13 @@ namespace MediaFoundationSamples
 			return (m_serverLocks != 0);
 		}
 
-		STDMETHODIMP_(ULONG) AddRef()
+		STDMETHODIMP_(ULONG)
+		AddRef()
 		{
 			return InterlockedIncrement(&m_refCount);
 		}
-		STDMETHODIMP_(ULONG) Release()
+		STDMETHODIMP_(ULONG)
+		Release()
 		{
 			assert(m_refCount >= 0);
 			ULONG uCount = InterlockedDecrement(&m_refCount);
@@ -131,11 +130,11 @@ namespace MediaFoundationSamples
 			}
 			else if (riid == __uuidof(IUnknown))
 			{
-				*ppv = static_cast<IUnknown*>(this);
+				*ppv = static_cast<IUnknown *>(this);
 			}
 			else if (riid == __uuidof(IClassFactory))
 			{
-				*ppv = static_cast<IClassFactory*>(this);
+				*ppv = static_cast<IClassFactory *>(this);
 			}
 			else
 			{
@@ -174,7 +173,6 @@ namespace MediaFoundationSamples
 			return S_OK;
 		}
 
-
 		// Static methods to lock and unlock the the server.
 		static void LockServer()
 		{
@@ -185,7 +183,6 @@ namespace MediaFoundationSamples
 		{
 			InterlockedDecrement(&m_serverLocks);
 		}
-
 	};
 
 	// BaseObjects
@@ -209,7 +206,7 @@ namespace MediaFoundationSamples
 	class RefCountedObject
 	{
 	protected:
-		volatile long   m_refCount;
+		volatile long m_refCount;
 
 	public:
 		RefCountedObject() : m_refCount(1) {}
@@ -234,7 +231,8 @@ namespace MediaFoundationSamples
 		}
 	};
 
-
-#define DEFINE_CLASSFACTORY_SERVER_LOCK  volatile long ClassFactory::m_serverLocks = 0;
+#define DEFINE_CLASSFACTORY_SERVER_LOCK volatile long ClassFactory::m_serverLocks = 0;
 
 }; // namespace MediaFoundationSamples
+
+#endif

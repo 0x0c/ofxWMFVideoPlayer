@@ -1,12 +1,14 @@
 #pragma once
 
+#ifdef WINVER
+
 namespace MediaFoundationSamples
 {
 
 	//////////////////////////////////////////////////////////////////////////
 	//  VideoBufferLock
 	//
-	//  Description: 
+	//  Description:
 	//  Locks a video buffer that might or might not support IMF2DBuffer.
 	//
 	//////////////////////////////////////////////////////////////////////////
@@ -20,7 +22,7 @@ namespace MediaFoundationSamples
 			m_pBuffer->AddRef();
 
 			// Query for the 2-D buffer interface. OK if this fails.
-			m_pBuffer->QueryInterface(IID_IMF2DBuffer, (void**)&m_p2DBuffer);
+			m_pBuffer->QueryInterface(IID_IMF2DBuffer, (void **)&m_p2DBuffer);
 		}
 
 		~VideoBufferLock()
@@ -38,11 +40,11 @@ namespace MediaFoundationSamples
 		// from the media type.
 
 		HRESULT LockBuffer(
-			LONG  lDefaultStride,    // Minimum stride (with no padding).
-			DWORD dwHeightInPixels,  // Height of the image, in pixels.
-			BYTE  **ppbScanLine0,    // Receives a pointer to the start of scan line 0.
-			LONG  *plStride          // Receives the actual stride.
-			)
+			LONG lDefaultStride,	// Minimum stride (with no padding).
+			DWORD dwHeightInPixels, // Height of the image, in pixels.
+			BYTE **ppbScanLine0,	// Receives a pointer to the start of scan line 0.
+			LONG *plStride			// Receives the actual stride.
+		)
 		{
 			HRESULT hr = S_OK;
 
@@ -90,8 +92,10 @@ namespace MediaFoundationSamples
 		}
 
 	private:
-		IMFMediaBuffer  *m_pBuffer;
-		IMF2DBuffer     *m_p2DBuffer;
+		IMFMediaBuffer *m_pBuffer;
+		IMF2DBuffer *m_p2DBuffer;
 	};
 
 }; // namespace MediaFoundationSamples
+
+#endif

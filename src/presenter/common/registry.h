@@ -1,7 +1,7 @@
 //////////////////////////////////////////////////////////////////////////
 //
 // Registry.h: Registry helpers.
-// 
+//
 // THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF
 // ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO
 // THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A
@@ -13,6 +13,8 @@
 
 #pragma once
 
+#ifdef WINVER
+
 namespace MediaFoundationSamples
 {
 
@@ -20,13 +22,11 @@ namespace MediaFoundationSamples
 	const DWORD CHARS_IN_GUID = 39;
 #endif
 
-
 	// Forward declares
-	HRESULT RegisterObject(HMODULE hModule, const GUID& guid, const TCHAR *sDescription, const TCHAR *sThreadingModel);
-	HRESULT UnregisterObject(const GUID& guid);
-	HRESULT CreateObjectKeyName(const GUID& guid, TCHAR *sName, DWORD cchMax);
+	HRESULT RegisterObject(HMODULE hModule, const GUID &guid, const TCHAR *sDescription, const TCHAR *sThreadingModel);
+	HRESULT UnregisterObject(const GUID &guid);
+	HRESULT CreateObjectKeyName(const GUID &guid, TCHAR *sName, DWORD cchMax);
 	HRESULT SetKeyValue(HKEY hKey, const TCHAR *sName, const TCHAR *sValue);
-
 
 	///////////////////////////////////////////////////////////////////////
 	// Name: RegisterObject
@@ -37,7 +37,7 @@ namespace MediaFoundationSamples
 	// sThreadingMode: Threading model. e.g., "Both"
 	///////////////////////////////////////////////////////////////////////
 
-	inline HRESULT RegisterObject(HMODULE hModule, const GUID& guid, const TCHAR *sDescription, const TCHAR *sThreadingModel)
+	inline HRESULT RegisterObject(HMODULE hModule, const GUID &guid, const TCHAR *sDescription, const TCHAR *sThreadingModel)
 	{
 		HKEY hKey = NULL;
 		HKEY hSubkey = NULL;
@@ -52,15 +52,15 @@ namespace MediaFoundationSamples
 		{
 			LONG lreturn = RegCreateKeyEx(
 				HKEY_CLASSES_ROOT,
-				(LPCTSTR)achTemp,     // subkey
-				0,                    // reserved
-				NULL,                 // class string (can be NULL)
+				(LPCTSTR)achTemp, // subkey
+				0,				  // reserved
+				NULL,			  // class string (can be NULL)
 				REG_OPTION_NON_VOLATILE,
 				KEY_ALL_ACCESS,
-				NULL,                 // security attributes
+				NULL, // security attributes
 				&hKey,
-				NULL                  // receives the "disposition" (is it a new or existing key)
-				);
+				NULL // receives the "disposition" (is it a new or existing key)
+			);
 
 			hr = __HRESULT_FROM_WIN32(lreturn);
 		}
@@ -77,7 +77,7 @@ namespace MediaFoundationSamples
 			const TCHAR *sServer = TEXT("InprocServer32");
 
 			LONG lreturn = RegCreateKeyEx(hKey, sServer, 0, NULL,
-				REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &hSubkey, NULL);
+										  REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &hSubkey, NULL);
 
 			hr = __HRESULT_FROM_WIN32(lreturn);
 		}
@@ -122,9 +122,6 @@ namespace MediaFoundationSamples
 		}
 
 		return hr;
-
-
-
 	}
 
 	///////////////////////////////////////////////////////////////////////
@@ -134,7 +131,7 @@ namespace MediaFoundationSamples
 	// guid: The object's CLSID
 	///////////////////////////////////////////////////////////////////////
 
-	inline HRESULT UnregisterObject(const GUID& guid)
+	inline HRESULT UnregisterObject(const GUID &guid)
 	{
 		TCHAR achTemp[MAX_PATH];
 
@@ -158,15 +155,14 @@ namespace MediaFoundationSamples
 		return hr;
 	}
 
-
 	///////////////////////////////////////////////////////////////////////
 	// Name: CreateObjectKeyName
 	// Desc: Converts a CLSID into a string with the form "CLSID\{clsid}"
 	///////////////////////////////////////////////////////////////////////
 
-	inline HRESULT CreateObjectKeyName(const GUID& guid, TCHAR *sName, DWORD cchMax)
+	inline HRESULT CreateObjectKeyName(const GUID &guid, TCHAR *sName, DWORD cchMax)
 	{
-		// convert CLSID uuid to string 
+		// convert CLSID uuid to string
 		OLECHAR szCLSID[CHARS_IN_GUID];
 		HRESULT hr = StringFromGUID2(guid, szCLSID, CHARS_IN_GUID);
 		if (FAILED(hr))
@@ -195,10 +191,10 @@ namespace MediaFoundationSamples
 		if (SUCCEEDED(hr))
 		{
 			// Size must include NULL terminator, which is not counted in StringCchLength
-			DWORD  cbData = ((DWORD)cch + 1) * sizeof(TCHAR);
+			DWORD cbData = ((DWORD)cch + 1) * sizeof(TCHAR);
 
 			// set description string
-			LONG ret = RegSetValueEx(hKey, sName, 0, REG_SZ, (BYTE*)sValue, cbData);
+			LONG ret = RegSetValueEx(hKey, sName, 0, REG_SZ, (BYTE *)sValue, cbData);
 			if (ret == ERROR_SUCCESS)
 			{
 				hr = S_OK;
@@ -212,3 +208,5 @@ namespace MediaFoundationSamples
 	}
 
 }; // namespace MediaFoundationSamples
+
+#endif

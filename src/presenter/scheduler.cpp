@@ -1,7 +1,7 @@
 //////////////////////////////////////////////////////////////////////////
 //
 // Scheduler.cpp: Schedules when video frames are presented.
-// 
+//
 // THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF
 // ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO
 // THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A
@@ -11,6 +11,8 @@
 //
 //
 //////////////////////////////////////////////////////////////////////////
+
+#ifdef WINVER
 
 #include "EVRPresenter.h"
 
@@ -29,20 +31,18 @@ const DWORD SCHEDULER_TIMEOUT = 5000;
 // Constructor
 //-----------------------------------------------------------------------------
 
-Scheduler::Scheduler() :
-	m_pCB(NULL),
-	m_pClock(NULL),
-	m_dwThreadID(0),
-	m_hSchedulerThread(NULL),
-	m_hThreadReadyEvent(NULL),
-	m_hFlushEvent(NULL),
-	m_fRate(1.0f),
-	m_LastSampleTime(0),
-	m_PerFrameInterval(0),
-	m_PerFrame_1_4th(0)
+Scheduler::Scheduler() : m_pCB(NULL),
+						 m_pClock(NULL),
+						 m_dwThreadID(0),
+						 m_hSchedulerThread(NULL),
+						 m_hThreadReadyEvent(NULL),
+						 m_hFlushEvent(NULL),
+						 m_fRate(1.0f),
+						 m_LastSampleTime(0),
+						 m_PerFrameInterval(0),
+						 m_PerFrame_1_4th(0)
 {
 }
-
 
 //-----------------------------------------------------------------------------
 // Destructor
@@ -53,13 +53,12 @@ Scheduler::~Scheduler()
 	SAFE_RELEASE(m_pClock);
 }
 
-
 //-----------------------------------------------------------------------------
 // SetFrameRate
 // Specifies the frame rate of the video, in frames per second.
 //-----------------------------------------------------------------------------
 
-void Scheduler::SetFrameRate(const MFRatio& fps)
+void Scheduler::SetFrameRate(const MFRatio &fps)
 {
 	UINT64 AvgTimePerFrame = 0;
 
@@ -71,8 +70,6 @@ void Scheduler::SetFrameRate(const MFRatio& fps)
 	// Calculate 1/4th of this value, because we use it frequently.
 	m_PerFrame_1_4th = m_PerFrameInterval / 4;
 }
-
-
 
 //-----------------------------------------------------------------------------
 // StartScheduler
@@ -117,11 +114,11 @@ HRESULT Scheduler::StartScheduler(IMFClock *pClock)
 		CHECK_HR(hr = HRESULT_FROM_WIN32(GetLastError()));
 	}
 
-	HANDLE hObjects[] = { m_hThreadReadyEvent, m_hSchedulerThread };
+	HANDLE hObjects[] = {m_hThreadReadyEvent, m_hSchedulerThread};
 	DWORD dwWait = 0;
 
 	// Wait for the thread to signal the "thread ready" event.
-	dwWait = WaitForMultipleObjects(2, hObjects, FALSE, INFINITE);  // Wait for EITHER of these handles.
+	dwWait = WaitForMultipleObjects(2, hObjects, FALSE, INFINITE); // Wait for EITHER of these handles.
 	if (WAIT_OBJECT_0 != dwWait)
 	{
 		// The thread terminated early for some reason. This is an error condition.
@@ -143,7 +140,6 @@ done:
 
 	return hr;
 }
-
 
 //-----------------------------------------------------------------------------
 // StopScheduler
@@ -180,13 +176,12 @@ HRESULT Scheduler::StopScheduler()
 	return S_OK;
 }
 
-
 //-----------------------------------------------------------------------------
 // Flush
 //
 // Flushes all samples that are queued for presentation.
 //
-// Note: This method is synchronous; ie., it waits for the flush operation to 
+// Note: This method is synchronous; ie., it waits for the flush operation to
 // complete on the worker thread.
 //-----------------------------------------------------------------------------
 
@@ -206,7 +201,7 @@ HRESULT Scheduler::Flush()
 
 		// Wait for the scheduler thread to signal the flush event,
 		// OR for the thread to terminate.
-		HANDLE objects[] = { m_hFlushEvent, m_hSchedulerThread };
+		HANDLE objects[] = {m_hFlushEvent, m_hSchedulerThread};
 
 		WaitForMultipleObjects(ARRAY_SIZE(objects), objects, FALSE, SCHEDULER_TIMEOUT);
 
@@ -215,7 +210,6 @@ HRESULT Scheduler::Flush()
 
 	return S_OK;
 }
-
 
 //-----------------------------------------------------------------------------
 // ScheduleSample
@@ -318,7 +312,6 @@ HRESULT Scheduler::ProcessSamplesInQueue(LONG *plNextSleep)
 	return hr;
 }
 
-
 //-----------------------------------------------------------------------------
 // ProcessSample
 //
@@ -327,14 +320,13 @@ HRESULT Scheduler::ProcessSamplesInQueue(LONG *plNextSleep)
 // plNextSleep: Receives the length of time the scheduler thread should sleep.
 //-----------------------------------------------------------------------------
 
-
 HRESULT Scheduler::ProcessSample(IMFSample *pSample, LONG *plNextSleep)
 {
 	HRESULT hr = S_OK;
 
 	LONGLONG hnsPresentationTime = 0;
 	LONGLONG hnsTimeNow = 0;
-	MFTIME   hnsSystemTime = 0;
+	MFTIME hnsSystemTime = 0;
 
 	BOOL bPresentNow = TRUE;
 	LONG lNextSleep = 0;
@@ -345,14 +337,14 @@ HRESULT Scheduler::ProcessSample(IMFSample *pSample, LONG *plNextSleep)
 		// have no time stamp.
 		hr = pSample->GetSampleTime(&hnsPresentationTime);
 
-		// Get the clock time. (But if the sample does not have a time stamp, 
+		// Get the clock time. (But if the sample does not have a time stamp,
 		// we don't need the clock time.)
 		if (SUCCEEDED(hr))
 		{
 			hr = m_pClock->GetCorrelatedTime(0, &hnsTimeNow, &hnsSystemTime);
 		}
 
-		// Calculate the time until the sample's presentation time. 
+		// Calculate the time until the sample's presentation time.
 		// A negative value means the sample is late.
 		LONGLONG hnsDelta = hnsPresentationTime - hnsTimeNow;
 		if (m_fRate < 0)
@@ -363,10 +355,10 @@ HRESULT Scheduler::ProcessSample(IMFSample *pSample, LONG *plNextSleep)
 
 		if (hnsDelta < -m_PerFrame_1_4th)
 		{
-			// This sample is late. 
+			// This sample is late.
 			bPresentNow = TRUE;
 		}
-		else if (hnsDelta >(3 * m_PerFrame_1_4th))
+		else if (hnsDelta > (3 * m_PerFrame_1_4th))
 		{
 			// This sample is still too early. Go to sleep.
 			lNextSleep = MFTimeToMsec(hnsDelta - (3 * m_PerFrame_1_4th));
@@ -395,16 +387,15 @@ HRESULT Scheduler::ProcessSample(IMFSample *pSample, LONG *plNextSleep)
 	return hr;
 }
 
-
 //-----------------------------------------------------------------------------
 // SchedulerThreadProc (static method)
-// 
+//
 // ThreadProc for the scheduler thread.
 //-----------------------------------------------------------------------------
 
 DWORD WINAPI Scheduler::SchedulerThreadProc(LPVOID lpParameter)
 {
-	Scheduler* pScheduler = reinterpret_cast<Scheduler*>(lpParameter);
+	Scheduler *pScheduler = reinterpret_cast<Scheduler *>(lpParameter);
 	if (pScheduler == NULL)
 	{
 		return -1;
@@ -414,16 +405,16 @@ DWORD WINAPI Scheduler::SchedulerThreadProc(LPVOID lpParameter)
 
 //-----------------------------------------------------------------------------
 // SchedulerThreadProcPrivate
-// 
+//
 // Non-static version of the ThreadProc.
 //-----------------------------------------------------------------------------
 
 DWORD Scheduler::SchedulerThreadProcPrivate()
 {
 	HRESULT hr = S_OK;
-	MSG     msg;
-	LONG    lWait = INFINITE;
-	BOOL    bExitThread = FALSE;
+	MSG msg;
+	LONG lWait = INFINITE;
+	BOOL bExitThread = FALSE;
 
 	// Force the system to create a message queue for this thread.
 	// (See MSDN documentation for PostThreadMessage.)
@@ -477,12 +468,14 @@ DWORD Scheduler::SchedulerThreadProcPrivate()
 					bProcessSamples = (lWait != INFINITE);
 				}
 				break;
-			} // switch  
+			} // switch
 
 		} // while PeekMessage
 
-	}  // while (!bExitThread)
+	} // while (!bExitThread)
 
 	TRACE((L"Exit scheduler thread.\n"));
 	return (SUCCEEDED(hr) ? 0 : 1);
 }
+
+#endif

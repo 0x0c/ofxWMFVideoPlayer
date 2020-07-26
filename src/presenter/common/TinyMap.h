@@ -13,11 +13,14 @@
 // NOTES:
 // The TinyMap class is designed to hold a small-ish number of elements where
 // look-up performance is not important. (It uses a sorted linked list.)
-// 
+//
 // TinyMap uses "copy semantics" (keys and values are copied into the map).
 // Keys must support the comparison operators.
 
 #pragma once
+
+#ifdef WINVER
+
 #include "linklist.h"
 
 namespace MediaFoundationSamples
@@ -38,14 +41,12 @@ namespace MediaFoundationSamples
 	};
 
 	template <class Key, class Value>
-	class TinyMap : List< Pair<Key, Value> >
+	class TinyMap : List<Pair<Key, Value>>
 	{
 	protected:
-
 		typedef Pair<Key, Value> pair_type;
 
 	public:
-
 		TinyMap()
 		{
 			Clear();
@@ -84,7 +85,6 @@ namespace MediaFoundationSamples
 			return hr;
 		}
 
-
 		HRESULT Remove(Key k)
 		{
 			HRESULT hr = E_FAIL;
@@ -97,7 +97,7 @@ namespace MediaFoundationSamples
 			{
 				if (pNode == &m_anchor)
 				{
-					// Reached the end of the list. 
+					// Reached the end of the list.
 					break;
 				}
 				else if (pNode->item.key == k)
@@ -178,7 +178,7 @@ namespace MediaFoundationSamples
 		// NOTE: This function assumes that the keys do not require special handling.
 
 		template <class FN>
-		void ClearValues(FN& clear_fn)
+		void ClearValues(FN &clear_fn)
 		{
 			Node *n = m_anchor.next;
 
@@ -203,7 +203,6 @@ namespace MediaFoundationSamples
 		{
 			return List<pair_type>::GetCount();
 		}
-
 
 		////////// Enumeration methods //////////
 
@@ -237,7 +236,6 @@ namespace MediaFoundationSamples
 			}
 		};
 
-
 		MAPPOS FrontPosition()
 		{
 			return MAPPOS(List<pair_type>::FrontPosition());
@@ -264,7 +262,6 @@ namespace MediaFoundationSamples
 			return hr;
 		}
 
-
 		HRESULT GetKey(MAPPOS vals, Key *ppItem)
 		{
 			HRESULT hr = S_OK;
@@ -285,8 +282,8 @@ namespace MediaFoundationSamples
 		{
 			return MAPPOS(List<pair_type>::Next(vals.pos));
 		}
-
-
 	};
 
 } // namespace MediaFoundationSamples
+
+#endif

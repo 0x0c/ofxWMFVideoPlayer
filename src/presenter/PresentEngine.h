@@ -19,6 +19,8 @@
 
 #pragma once
 
+#ifdef WINVER
+
 //#include "glu.h"
 #include "GL/glew.h"
 #include "GL/wglew.h"
@@ -140,3 +142,5 @@ public:
 
 	bool unlockSharedTexture();
 };
+
+#endif

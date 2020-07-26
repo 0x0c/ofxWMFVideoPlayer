@@ -1,7 +1,7 @@
 //////////////////////////////////////////////////////////////////////////
 //
 // trace.h : Functions to return the names of constants.
-// 
+//
 // THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF
 // ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO
 // THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A
@@ -13,10 +13,14 @@
 
 #pragma once
 
+#ifdef WINVER
+
 #include "logging.h"
 #include <mfidl.h>
 
-#define NAME(x) case x: return L#x
+#define NAME(x) \
+	case x:     \
+		return L#x
 
 namespace MediaFoundationSamples
 {
@@ -26,7 +30,7 @@ namespace MediaFoundationSamples
 	// use these functions for debugging purposes.
 
 	// Media Foundation event names (subset)
-	inline const WCHAR* EventName(MediaEventType met)
+	inline const WCHAR *EventName(MediaEventType met)
 	{
 		switch (met)
 		{
@@ -113,8 +117,8 @@ namespace MediaFoundationSamples
 		}
 	}
 
-	// Names of VARIANT data types. 
-	inline const WCHAR* VariantTypeName(const PROPVARIANT& prop)
+	// Names of VARIANT data types.
+	inline const WCHAR *VariantTypeName(const PROPVARIANT &prop)
 	{
 		switch (prop.vt & VT_TYPEMASK)
 		{
@@ -168,7 +172,7 @@ namespace MediaFoundationSamples
 	}
 
 	// Names of topology node types.
-	inline const WCHAR* TopologyNodeTypeName(MF_TOPOLOGY_TYPE nodeType)
+	inline const WCHAR *TopologyNodeTypeName(MF_TOPOLOGY_TYPE nodeType)
 	{
 		switch (nodeType)
 		{
@@ -181,7 +185,7 @@ namespace MediaFoundationSamples
 		}
 	}
 
-	inline const WCHAR* MFTMessageName(MFT_MESSAGE_TYPE msg)
+	inline const WCHAR *MFTMessageName(MFT_MESSAGE_TYPE msg)
 	{
 		switch (msg)
 		{
@@ -198,3 +202,5 @@ namespace MediaFoundationSamples
 	}
 
 }; // namespace MediaFoundationSamples
+
+#endif

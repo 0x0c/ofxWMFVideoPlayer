@@ -1,12 +1,18 @@
 #pragma once
 
+#ifdef WINVER
+
 #include <mferror.h>
 
 #define USE_LOGGING
 #include "logging.h"
 
 #ifndef CHECK_HR
-#define CHECK_HR(hr) if (FAILED(hr)) { goto done; }
+#define CHECK_HR(hr) \
+	if (FAILED(hr))  \
+	{                \
+		goto done;   \
+	}
 #endif
 
 namespace MediaFoundationSamples
@@ -18,11 +24,11 @@ namespace MediaFoundationSamples
 
 #else
 
-	LPCWSTR GetGUIDNameConst(const GUID& guid);
-	HRESULT GetGUIDName(const GUID& guid, WCHAR **ppwsz);
+	LPCWSTR GetGUIDNameConst(const GUID &guid);
+	HRESULT GetGUIDName(const GUID &guid, WCHAR **ppwsz);
 
 	HRESULT LogAttributeValueByIndex(IMFAttributes *pAttr, DWORD index);
-	HRESULT SpecialCaseAttributeValue(GUID guid, const PROPVARIANT& var);
+	HRESULT SpecialCaseAttributeValue(GUID guid, const PROPVARIANT &var);
 
 	inline HRESULT LogMediaType(IMFMediaType *pType)
 	{
@@ -40,7 +46,6 @@ namespace MediaFoundationSamples
 		return hr;
 	}
 
-
 	inline HRESULT LogAttributeValueByIndex(IMFAttributes *pAttr, DWORD index)
 	{
 		WCHAR *pGuidName = NULL;
@@ -48,7 +53,7 @@ namespace MediaFoundationSamples
 		PROPVARIANT var;
 
 		HRESULT hr = S_OK;
-		GUID guid = { 0 };
+		GUID guid = {0};
 
 		PropVariantInit(&var);
 
@@ -108,10 +113,7 @@ namespace MediaFoundationSamples
 		return hr;
 	}
 
-
-
-
-	inline HRESULT GetGUIDName(const GUID& guid, WCHAR **ppwsz)
+	inline HRESULT GetGUIDName(const GUID &guid, WCHAR **ppwsz)
 	{
 		HRESULT hr = S_OK;
 		size_t cchLength = 0;
@@ -124,7 +126,7 @@ namespace MediaFoundationSamples
 		{
 			CHECK_HR(hr = StringCchLength(pcwsz, STRSAFE_MAX_CCH, &cchLength));
 
-			pName = (WCHAR*)CoTaskMemAlloc((cchLength + 1) * sizeof(WCHAR));
+			pName = (WCHAR *)CoTaskMemAlloc((cchLength + 1) * sizeof(WCHAR));
 
 			CHECK_HR(hr = StringCchCopy(pName, cchLength + 1, pcwsz));
 		}
@@ -144,8 +146,7 @@ namespace MediaFoundationSamples
 		return hr;
 	}
 
-
-	inline void LogUINT32AsUINT64(const PROPVARIANT& var)
+	inline void LogUINT32AsUINT64(const PROPVARIANT &var)
 	{
 		UINT32 uHigh = 0, uLow = 0;
 
@@ -153,7 +154,7 @@ namespace MediaFoundationSamples
 		TRACE((L"%d x %d", uHigh, uLow));
 	}
 
-	inline HRESULT SpecialCaseAttributeValue(GUID guid, const PROPVARIANT& var)
+	inline HRESULT SpecialCaseAttributeValue(GUID guid, const PROPVARIANT &var)
 	{
 		if (guid == MF_MT_FRAME_RATE)
 		{
@@ -176,10 +177,12 @@ namespace MediaFoundationSamples
 	}
 
 #ifndef IF_EQUAL_RETURN
-#define IF_EQUAL_RETURN(param, val) if(val == param) return L#val
+#define IF_EQUAL_RETURN(param, val) \
+	if (val == param)               \
+	return L#val
 #endif
 
-	inline LPCWSTR GetGUIDNameConst(const GUID& guid)
+	inline LPCWSTR GetGUIDNameConst(const GUID &guid)
 	{
 		IF_EQUAL_RETURN(guid, MF_MT_MAJOR_TYPE);
 		IF_EQUAL_RETURN(guid, MF_MT_MAJOR_TYPE);
@@ -255,7 +258,6 @@ namespace MediaFoundationSamples
 		IF_EQUAL_RETURN(guid, MF_MT_FRAME_RATE_RANGE_MAX);
 #endif
 
-
 		// Media types
 
 		IF_EQUAL_RETURN(guid, MFMediaType_Default);
@@ -269,77 +271,77 @@ namespace MediaFoundationSamples
 		IF_EQUAL_RETURN(guid, MFMediaType_Binary);
 		IF_EQUAL_RETURN(guid, MFMediaType_FileTransfer);
 
-		IF_EQUAL_RETURN(guid, MFVideoFormat_RGB32); //    D3DFMT_X8R8G8B8 );
+		IF_EQUAL_RETURN(guid, MFVideoFormat_RGB32);	 //    D3DFMT_X8R8G8B8 );
 		IF_EQUAL_RETURN(guid, MFVideoFormat_ARGB32); //   D3DFMT_A8R8G8B8 );
-		IF_EQUAL_RETURN(guid, MFVideoFormat_RGB24); //    D3DFMT_R8G8B8 );
+		IF_EQUAL_RETURN(guid, MFVideoFormat_RGB24);	 //    D3DFMT_R8G8B8 );
 		IF_EQUAL_RETURN(guid, MFVideoFormat_RGB555); //   D3DFMT_X1R5G5B5 );
 		IF_EQUAL_RETURN(guid, MFVideoFormat_RGB565); //   D3DFMT_R5G6B5 );
-		IF_EQUAL_RETURN(guid, MFVideoFormat_AI44); //     FCC('AI44') );
-		IF_EQUAL_RETURN(guid, MFVideoFormat_AYUV); //     FCC('AYUV') );
-		IF_EQUAL_RETURN(guid, MFVideoFormat_YUY2); //     FCC('YUY2') );
-		IF_EQUAL_RETURN(guid, MFVideoFormat_UYVY); //     FCC('UYVY') );
-		IF_EQUAL_RETURN(guid, MFVideoFormat_NV11); //     FCC('NV11') );
-		IF_EQUAL_RETURN(guid, MFVideoFormat_NV12); //     FCC('NV12') );
-		IF_EQUAL_RETURN(guid, MFVideoFormat_YV12); //     FCC('YV12') );
-		IF_EQUAL_RETURN(guid, MFVideoFormat_IYUV); //     FCC('IYUV') );
-		IF_EQUAL_RETURN(guid, MFVideoFormat_Y210); //     FCC('Y210') );
-		IF_EQUAL_RETURN(guid, MFVideoFormat_Y216); //     FCC('Y216') );
-		IF_EQUAL_RETURN(guid, MFVideoFormat_Y410); //     FCC('Y410') );
-		IF_EQUAL_RETURN(guid, MFVideoFormat_Y416); //     FCC('Y416') );
-		IF_EQUAL_RETURN(guid, MFVideoFormat_P210); //     FCC('P210') );
-		IF_EQUAL_RETURN(guid, MFVideoFormat_P216); //     FCC('P216') );
-		IF_EQUAL_RETURN(guid, MFVideoFormat_P010); //     FCC('P010') );
-		IF_EQUAL_RETURN(guid, MFVideoFormat_P016); //     FCC('P016') );
-		IF_EQUAL_RETURN(guid, MFVideoFormat_v210); //     FCC('v210') );
-		IF_EQUAL_RETURN(guid, MFVideoFormat_v410); //     FCC('v410') );
-		IF_EQUAL_RETURN(guid, MFVideoFormat_MP43); //     FCC('MP43') );
-		IF_EQUAL_RETURN(guid, MFVideoFormat_MP4S); //     FCC('MP4S') );
-		IF_EQUAL_RETURN(guid, MFVideoFormat_M4S2); //     FCC('M4S2') );
-		IF_EQUAL_RETURN(guid, MFVideoFormat_MP4V); //     FCC('MP4V') );
-		IF_EQUAL_RETURN(guid, MFVideoFormat_WMV1); //     FCC('WMV1') );
-		IF_EQUAL_RETURN(guid, MFVideoFormat_WMV2); //     FCC('WMV2') );
-		IF_EQUAL_RETURN(guid, MFVideoFormat_WMV3); //     FCC('WMV3') );
-		IF_EQUAL_RETURN(guid, MFVideoFormat_WVC1); //     FCC('WVC1') );
-		IF_EQUAL_RETURN(guid, MFVideoFormat_MSS1); //     FCC('MSS1') );
-		IF_EQUAL_RETURN(guid, MFVideoFormat_MSS2); //     FCC('MSS2') );
-		IF_EQUAL_RETURN(guid, MFVideoFormat_MPG1); //     FCC('MPG1') );
-		IF_EQUAL_RETURN(guid, MFVideoFormat_DVSL); //     FCC('dvsl') );
-		IF_EQUAL_RETURN(guid, MFVideoFormat_DVSD); //     FCC('dvsd') );
-		IF_EQUAL_RETURN(guid, MFVideoFormat_DV25); //     FCC('dv25') );
-		IF_EQUAL_RETURN(guid, MFVideoFormat_DV50); //     FCC('dv50') );
-		IF_EQUAL_RETURN(guid, MFVideoFormat_DVH1); //     FCC('dvh1') );
+		IF_EQUAL_RETURN(guid, MFVideoFormat_AI44);	 //     FCC('AI44') );
+		IF_EQUAL_RETURN(guid, MFVideoFormat_AYUV);	 //     FCC('AYUV') );
+		IF_EQUAL_RETURN(guid, MFVideoFormat_YUY2);	 //     FCC('YUY2') );
+		IF_EQUAL_RETURN(guid, MFVideoFormat_UYVY);	 //     FCC('UYVY') );
+		IF_EQUAL_RETURN(guid, MFVideoFormat_NV11);	 //     FCC('NV11') );
+		IF_EQUAL_RETURN(guid, MFVideoFormat_NV12);	 //     FCC('NV12') );
+		IF_EQUAL_RETURN(guid, MFVideoFormat_YV12);	 //     FCC('YV12') );
+		IF_EQUAL_RETURN(guid, MFVideoFormat_IYUV);	 //     FCC('IYUV') );
+		IF_EQUAL_RETURN(guid, MFVideoFormat_Y210);	 //     FCC('Y210') );
+		IF_EQUAL_RETURN(guid, MFVideoFormat_Y216);	 //     FCC('Y216') );
+		IF_EQUAL_RETURN(guid, MFVideoFormat_Y410);	 //     FCC('Y410') );
+		IF_EQUAL_RETURN(guid, MFVideoFormat_Y416);	 //     FCC('Y416') );
+		IF_EQUAL_RETURN(guid, MFVideoFormat_P210);	 //     FCC('P210') );
+		IF_EQUAL_RETURN(guid, MFVideoFormat_P216);	 //     FCC('P216') );
+		IF_EQUAL_RETURN(guid, MFVideoFormat_P010);	 //     FCC('P010') );
+		IF_EQUAL_RETURN(guid, MFVideoFormat_P016);	 //     FCC('P016') );
+		IF_EQUAL_RETURN(guid, MFVideoFormat_v210);	 //     FCC('v210') );
+		IF_EQUAL_RETURN(guid, MFVideoFormat_v410);	 //     FCC('v410') );
+		IF_EQUAL_RETURN(guid, MFVideoFormat_MP43);	 //     FCC('MP43') );
+		IF_EQUAL_RETURN(guid, MFVideoFormat_MP4S);	 //     FCC('MP4S') );
+		IF_EQUAL_RETURN(guid, MFVideoFormat_M4S2);	 //     FCC('M4S2') );
+		IF_EQUAL_RETURN(guid, MFVideoFormat_MP4V);	 //     FCC('MP4V') );
+		IF_EQUAL_RETURN(guid, MFVideoFormat_WMV1);	 //     FCC('WMV1') );
+		IF_EQUAL_RETURN(guid, MFVideoFormat_WMV2);	 //     FCC('WMV2') );
+		IF_EQUAL_RETURN(guid, MFVideoFormat_WMV3);	 //     FCC('WMV3') );
+		IF_EQUAL_RETURN(guid, MFVideoFormat_WVC1);	 //     FCC('WVC1') );
+		IF_EQUAL_RETURN(guid, MFVideoFormat_MSS1);	 //     FCC('MSS1') );
+		IF_EQUAL_RETURN(guid, MFVideoFormat_MSS2);	 //     FCC('MSS2') );
+		IF_EQUAL_RETURN(guid, MFVideoFormat_MPG1);	 //     FCC('MPG1') );
+		IF_EQUAL_RETURN(guid, MFVideoFormat_DVSL);	 //     FCC('dvsl') );
+		IF_EQUAL_RETURN(guid, MFVideoFormat_DVSD);	 //     FCC('dvsd') );
+		IF_EQUAL_RETURN(guid, MFVideoFormat_DV25);	 //     FCC('dv25') );
+		IF_EQUAL_RETURN(guid, MFVideoFormat_DV50);	 //     FCC('dv50') );
+		IF_EQUAL_RETURN(guid, MFVideoFormat_DVH1);	 //     FCC('dvh1') );
 
 #if (WINVER >= _WIN32_WINNT_WIN7)
-		IF_EQUAL_RETURN(guid, MFVideoFormat_I420); //     FCC('I420') );
-		IF_EQUAL_RETURN(guid, MFVideoFormat_H264); //     FCC('H264') );
-		IF_EQUAL_RETURN(guid, MFVideoFormat_DVHD); //     FCC('dvhd') );
-		IF_EQUAL_RETURN(guid, MFVideoFormat_DVH1); //     FCC('dvh1') );
-		IF_EQUAL_RETURN(guid, MFVideoFormat_DVC); //     FCC('dvc ') );
-		IF_EQUAL_RETURN(guid, MFVideoFormat_MJPG); //     FCC('MJPG') );
+		IF_EQUAL_RETURN(guid, MFVideoFormat_I420);	 //     FCC('I420') );
+		IF_EQUAL_RETURN(guid, MFVideoFormat_H264);	 //     FCC('H264') );
+		IF_EQUAL_RETURN(guid, MFVideoFormat_DVHD);	 //     FCC('dvhd') );
+		IF_EQUAL_RETURN(guid, MFVideoFormat_DVH1);	 //     FCC('dvh1') );
+		IF_EQUAL_RETURN(guid, MFVideoFormat_DVC);	 //     FCC('dvc ') );
+		IF_EQUAL_RETURN(guid, MFVideoFormat_MJPG);	 //     FCC('MJPG') );
 #endif
 
-		IF_EQUAL_RETURN(guid, MFAudioFormat_PCM); //              WAVE_FORMAT_PCM );
-		IF_EQUAL_RETURN(guid, MFAudioFormat_Float); //            WAVE_FORMAT_IEEE_FLOAT );
-		IF_EQUAL_RETURN(guid, MFAudioFormat_DTS); //              WAVE_FORMAT_DTS );
-		IF_EQUAL_RETURN(guid, MFAudioFormat_Dolby_AC3_SPDIF); //  WAVE_FORMAT_DOLBY_AC3_SPDIF );
-		IF_EQUAL_RETURN(guid, MFAudioFormat_DRM); //              WAVE_FORMAT_DRM );
-		IF_EQUAL_RETURN(guid, MFAudioFormat_WMAudioV8); //        WAVE_FORMAT_WMAUDIO2 );
-		IF_EQUAL_RETURN(guid, MFAudioFormat_WMAudioV9); //        WAVE_FORMAT_WMAUDIO3 );
+		IF_EQUAL_RETURN(guid, MFAudioFormat_PCM);			   //              WAVE_FORMAT_PCM );
+		IF_EQUAL_RETURN(guid, MFAudioFormat_Float);			   //            WAVE_FORMAT_IEEE_FLOAT );
+		IF_EQUAL_RETURN(guid, MFAudioFormat_DTS);			   //              WAVE_FORMAT_DTS );
+		IF_EQUAL_RETURN(guid, MFAudioFormat_Dolby_AC3_SPDIF);  //  WAVE_FORMAT_DOLBY_AC3_SPDIF );
+		IF_EQUAL_RETURN(guid, MFAudioFormat_DRM);			   //              WAVE_FORMAT_DRM );
+		IF_EQUAL_RETURN(guid, MFAudioFormat_WMAudioV8);		   //        WAVE_FORMAT_WMAUDIO2 );
+		IF_EQUAL_RETURN(guid, MFAudioFormat_WMAudioV9);		   //        WAVE_FORMAT_WMAUDIO3 );
 		IF_EQUAL_RETURN(guid, MFAudioFormat_WMAudio_Lossless); // WAVE_FORMAT_WMAUDIO_LOSSLESS );
-		IF_EQUAL_RETURN(guid, MFAudioFormat_WMASPDIF); //         WAVE_FORMAT_WMASPDIF );
-		IF_EQUAL_RETURN(guid, MFAudioFormat_MSP1); //             WAVE_FORMAT_WMAVOICE9 );
-		IF_EQUAL_RETURN(guid, MFAudioFormat_MP3); //              WAVE_FORMAT_MPEGLAYER3 );
-		IF_EQUAL_RETURN(guid, MFAudioFormat_MPEG); //             WAVE_FORMAT_MPEG );
+		IF_EQUAL_RETURN(guid, MFAudioFormat_WMASPDIF);		   //         WAVE_FORMAT_WMASPDIF );
+		IF_EQUAL_RETURN(guid, MFAudioFormat_MSP1);			   //             WAVE_FORMAT_WMAVOICE9 );
+		IF_EQUAL_RETURN(guid, MFAudioFormat_MP3);			   //              WAVE_FORMAT_MPEGLAYER3 );
+		IF_EQUAL_RETURN(guid, MFAudioFormat_MPEG);			   //             WAVE_FORMAT_MPEG );
 
 #if (WINVER >= _WIN32_WINNT_WIN7)
-		IF_EQUAL_RETURN(guid, MFAudioFormat_AAC); //              WAVE_FORMAT_MPEG_HEAAC );
-		IF_EQUAL_RETURN(guid, MFAudioFormat_ADTS); //             WAVE_FORMAT_MPEG_ADTS_AAC );
+		IF_EQUAL_RETURN(guid, MFAudioFormat_AAC);			   //              WAVE_FORMAT_MPEG_HEAAC );
+		IF_EQUAL_RETURN(guid, MFAudioFormat_ADTS);			   //             WAVE_FORMAT_MPEG_ADTS_AAC );
 #endif
 
 		return NULL;
-
 	}
 
 #endif // _DEBUG
 
-}; // namespace
+}; // namespace MediaFoundationSamples
+#endif

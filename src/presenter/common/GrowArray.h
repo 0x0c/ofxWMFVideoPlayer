@@ -10,17 +10,17 @@
 //  Copyright (C) Microsoft Corporation. All rights reserved.
 //-----------------------------------------------------------------------------
 
-
 #pragma once
 
+#ifdef WINVER
 
 namespace MediaFoundationSamples
 {
 
-	// Class template: Re-sizable array. 
+	// Class template: Re-sizable array.
 
-	// To grow or shrink the array, call SetSize(). 
-	// To pre-allocate the array, call Allocate(). 
+	// To grow or shrink the array, call SetSize().
+	// To pre-allocate the array, call Allocate().
 
 	// Notes:
 	// Copy constructor and assignment operator are private, to avoid throwing exceptions. (One could easily modify this.)
@@ -33,7 +33,6 @@ namespace MediaFoundationSamples
 	public:
 		GrowableArray() : m_count(0), m_allocated(0), m_pArray(NULL)
 		{
-
 		}
 		virtual ~GrowableArray()
 		{
@@ -92,31 +91,31 @@ namespace MediaFoundationSamples
 		DWORD GetCount() const { return m_count; }
 
 		// Accessor.
-		T& operator[](DWORD index)
+		T &operator[](DWORD index)
 		{
 			assert(index < m_count);
 			return m_pArray[index];
 		}
 
 		// Const accessor.
-		const T& operator[](DWORD index) const
+		const T &operator[](DWORD index) const
 		{
 			assert(index < m_count);
 			return m_pArray[index];
 		}
 
 		// Return the underlying array.
-		T* Ptr() { return m_pArray; }
+		T *Ptr() { return m_pArray; }
 
 	protected:
-		GrowableArray& operator=(const GrowableArray& r);
+		GrowableArray &operator=(const GrowableArray &r);
 		GrowableArray(const GrowableArray &r);
 
-		T       *m_pArray;
-		DWORD   m_count;        // Nominal count.
-		DWORD   m_allocated;    // Actual allocation size.
+		T *m_pArray;
+		DWORD m_count;	   // Nominal count.
+		DWORD m_allocated; // Actual allocation size.
 	};
 
-};  // namespace MediaFoundationSamples
+}; // namespace MediaFoundationSamples
 
-
+#endif

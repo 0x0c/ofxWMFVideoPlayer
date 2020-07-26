@@ -14,6 +14,8 @@
 
 #pragma once
 
+#ifdef WINVER
+
 #include <windows.h>
 #include <intsafe.h>
 #include <math.h>
@@ -61,4 +63,4 @@ static const GUID MFSamplePresenter_SampleSwapChain =
 #include "PresentEngine.h"
 #include "Presenter.h"
 
-
+#endif

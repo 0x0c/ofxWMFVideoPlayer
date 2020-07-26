@@ -1,8 +1,9 @@
 #pragma once
 
+#ifdef WINVER
+
 namespace MediaFoundationSamples
 {
-
 
 	//////////////////////////////////////////////////////////////////////////
 	//  CritSec
@@ -13,6 +14,7 @@ namespace MediaFoundationSamples
 	{
 	private:
 		CRITICAL_SECTION m_criticalSection;
+
 	public:
 		CritSec()
 		{
@@ -35,10 +37,9 @@ namespace MediaFoundationSamples
 		}
 	};
 
-
 	//////////////////////////////////////////////////////////////////////////
 	//  AutoLock
-	//  Description: Provides automatic locking and unlocking of a 
+	//  Description: Provides automatic locking and unlocking of a
 	//               of a critical section.
 	//
 	//  Note: The AutoLock object must go out of scope before the CritSec.
@@ -48,8 +49,9 @@ namespace MediaFoundationSamples
 	{
 	private:
 		CritSec *m_pCriticalSection;
+
 	public:
-		AutoLock(CritSec& crit)
+		AutoLock(CritSec &crit)
 		{
 			m_pCriticalSection = &crit;
 			m_pCriticalSection->Lock();
@@ -62,3 +64,4 @@ namespace MediaFoundationSamples
 
 }; // namespace MediaFoundationSamples
 
+#endif

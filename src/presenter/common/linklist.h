@@ -12,10 +12,12 @@
 
 #pragma once
 
+#ifdef WINVER
+
 // Notes:
-// 
-// The List class template implements a simple double-linked list. 
-// It uses STL's copy semantics. 
+//
+// The List class template implements a simple double-linked list.
+// It uses STL's copy semantics.
 
 // There are two versions of the Clear() method:
 //  Clear(void) clears the list w/out cleaning up the object.
@@ -36,11 +38,10 @@
 namespace MediaFoundationSamples
 {
 
-
 	template <class T>
 	struct NoOp
 	{
-		void operator()(T& t)
+		void operator()(T &t)
 		{
 		}
 	};
@@ -49,13 +50,12 @@ namespace MediaFoundationSamples
 	class List
 	{
 	protected:
-
 		// Nodes in the linked list
 		struct Node
 		{
 			Node *prev;
 			Node *next;
-			T    item;
+			T item;
 
 			Node() : prev(NULL), next(NULL)
 			{
@@ -70,7 +70,6 @@ namespace MediaFoundationSamples
 		};
 
 	public:
-
 		// Object for enumerating the list.
 		class POSITION
 		{
@@ -100,15 +99,15 @@ namespace MediaFoundationSamples
 		};
 
 	protected:
-		Node    m_anchor;  // Anchor node for the linked list.
-		DWORD   m_count;   // Number of items in the list.
+		Node m_anchor; // Anchor node for the linked list.
+		DWORD m_count; // Number of items in the list.
 
-		Node* Front() const
+		Node *Front() const
 		{
 			return m_anchor.next;
 		}
 
-		Node* Back() const
+		Node *Back() const
 		{
 			return m_anchor.prev;
 		}
@@ -139,7 +138,7 @@ namespace MediaFoundationSamples
 			return S_OK;
 		}
 
-		virtual HRESULT GetItem(const Node *pNode, T* ppItem)
+		virtual HRESULT GetItem(const Node *pNode, T *ppItem)
 		{
 			if (pNode == NULL || ppItem == NULL)
 			{
@@ -166,7 +165,6 @@ namespace MediaFoundationSamples
 				return E_INVALIDARG;
 			}
 
-
 			T item;
 
 			// The next node's previous is this node's previous.
@@ -189,7 +187,6 @@ namespace MediaFoundationSamples
 		}
 
 	public:
-
 		List()
 		{
 			m_anchor.next = &m_anchor;
@@ -208,7 +205,6 @@ namespace MediaFoundationSamples
 		{
 			return InsertAfter(item, m_anchor.prev);
 		}
-
 
 		HRESULT InsertFront(T item)
 		{
@@ -269,7 +265,6 @@ namespace MediaFoundationSamples
 			}
 		}
 
-
 		// GetCount: Returns the number of items in the list.
 		DWORD GetCount() const { return m_count; }
 
@@ -281,7 +276,7 @@ namespace MediaFoundationSamples
 		// Clear: Takes a functor object whose operator()
 		// frees the object on the list.
 		template <class FN>
-		void Clear(FN& clear_fn)
+		void Clear(FN &clear_fn)
 		{
 			Node *n = m_anchor.next;
 
@@ -307,7 +302,6 @@ namespace MediaFoundationSamples
 		{
 			Clear<NoOp<T>>(NoOp<T>());
 		}
-
 
 		// Enumerator functions
 
@@ -352,15 +346,15 @@ namespace MediaFoundationSamples
 			}
 		}
 
-		// Remove an item at a position. 
+		// Remove an item at a position.
 		// The item is returns in ppItem, unless ppItem is NULL.
 		// NOTE: This method invalidates the POSITION object.
-		HRESULT Remove(POSITION& pos, T *ppItem)
+		HRESULT Remove(POSITION &pos, T *ppItem)
 		{
 			if (pos.pNode)
 			{
 				// Remove const-ness temporarily...
-				Node *pNode = const_cast<Node*>(pos.pNode);
+				Node *pNode = const_cast<Node *>(pos.pNode);
 
 				pos = POSITION();
 
@@ -371,10 +365,7 @@ namespace MediaFoundationSamples
 				return E_INVALIDARG;
 			}
 		}
-
 	};
-
-
 
 	// Typical functors for Clear method.
 
@@ -405,13 +396,12 @@ namespace MediaFoundationSamples
 		}
 	};
 
-
 	// ComPtrList class
 	// Derived class that makes it safer to store COM pointers in the List<> class.
 	// It automatically AddRef's the pointers that are inserted onto the list
-	// (unless the insertion method fails). 
+	// (unless the insertion method fails).
 	//
-	// T must be a COM interface type. 
+	// T must be a COM interface type.
 	// example: ComPtrList<IUnknown>
 	//
 	// NULLABLE: If true, client can insert NULL pointers. This means GetItem can
@@ -419,11 +409,10 @@ namespace MediaFoundationSamples
 	// pointers.
 
 	template <class T, bool NULLABLE = FALSE>
-	class ComPtrList : public List<T*>
+	class ComPtrList : public List<T *>
 	{
 	public:
-
-		typedef T* Ptr;
+		typedef T *Ptr;
 
 		void Clear()
 		{
@@ -457,7 +446,7 @@ namespace MediaFoundationSamples
 			return hr;
 		}
 
-		HRESULT GetItem(const Node *pNode, Ptr* ppItem)
+		HRESULT GetItem(const Node *pNode, Ptr *ppItem)
 		{
 			Ptr pItem = NULL;
 
@@ -479,7 +468,7 @@ namespace MediaFoundationSamples
 		HRESULT RemoveItem(Node *pNode, Ptr *ppItem)
 		{
 			// ppItem can be NULL, but we need to get the
-			// item so that we can release it. 
+			// item so that we can release it.
 
 			// If ppItem is not NULL, we will AddRef it on the way out.
 
@@ -503,5 +492,6 @@ namespace MediaFoundationSamples
 		}
 	};
 
-};  // namespace MediaFoundationSamples
+}; // namespace MediaFoundationSamples
 
+#endif
