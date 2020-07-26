@@ -26,8 +26,3 @@ Copy (and rename) a mp4 file as "test.mp4" into the data folder and run the exam
 
 The texture sharing we are using is based upon an NVIDIA extension but AMD/ATI cards claims they support it was well, even though sometimes it gets more finicky.
 Feedback on working/not working cards and drivers are more than welcomed.
-
-## Workaround
-
-If you got errors `LINK2019` caused by undefined symbol of `SimplePool`, add `#include "Helpers.h"` at `Presenter.h` then build again. 
-After successfuly build your solution, you can remote `#include "Helpers.h"`.

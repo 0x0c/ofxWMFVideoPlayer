@@ -56,7 +56,7 @@ static const GUID MFSamplePresenter_SampleSwapChain =
 
 
 // Project headers.
-#include "Helpers.h"
+#include "ofxWMFVideoPlayer_Helpers.h"
 #include "Scheduler.h"
 #include "PresentEngine.h"
 #include "Presenter.h"
