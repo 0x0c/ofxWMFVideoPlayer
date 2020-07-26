@@ -19,6 +19,7 @@
 #include "common/common.h"
 //#include "common/ClassFactory.h"
 #include "EVRPresenter.h"
+#include "Helpers.h"
 
 //DEFINE_CLASSFACTORY_SERVER_LOCK;
 
