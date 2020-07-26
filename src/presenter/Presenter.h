@@ -16,7 +16,6 @@
 
 #pragma once
 
-#include "Helpers.h"
 #include "common/common.h"
 //#include "common/ClassFactory.h"
 #include "EVRPresenter.h"
