@@ -31,10 +31,13 @@ public:
 	float				getPositionInSeconds();
 	float				getDuration();
 	float				getFrameRate();
+	int					getTotalNumFrames();
+	int					getCurrentFrame();
 
 	bool				canRewind() { return _player->canRewind(); }
 
 	void				setPosition(float pct);
+	void				setFrame(int frame);
 
 	void				setVolume(float vol);
 	float				getVolume();

@@ -312,7 +312,7 @@ float ofxWMFVideoPlayer::getPositionInSeconds()
 	return _player->getPosition();
 }
 
-float 			ofxWMFVideoPlayer::getDuration() {
+float ofxWMFVideoPlayer::getDuration() {
 	return _player->getDuration();
 }
 
@@ -320,6 +320,11 @@ void ofxWMFVideoPlayer::setPosition(float pos)
 {
 	pos = ofClamp(pos, 0, 1);
 	_player->setPosition(pos*getDuration());
+}
+
+void ofxWMFVideoPlayer::setFrame(int frame)
+{
+	setPosition(frame / (float)getTotalNumFrames());
 }
 
 void ofxWMFVideoPlayer::setVolume(float vol)
@@ -346,6 +351,16 @@ float ofxWMFVideoPlayer::getFrameRate()
 	if (!_player) return 0.0f;
 	if (_frameRate == 0.0f) _frameRate = _player->getFrameRate();
 	return _frameRate;
+}
+
+int ofxWMFVideoPlayer::getTotalNumFrames()
+{
+	return getDuration() * getFrameRate();
+}
+
+int ofxWMFVideoPlayer::getCurrentFrame()
+{
+	return getTotalNumFrames() * getPosition();
 }
 
 float ofxWMFVideoPlayer::getSpeed() {
