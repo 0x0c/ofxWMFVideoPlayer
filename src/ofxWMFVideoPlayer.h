@@ -1,6 +1,6 @@
 #pragma once
 
-#ifdef defined(_MSVC_LANG)
+#ifdef _MSC_VER
 
 //ofxWMFVideoPlayer addon written by Philippe Laulheret for Second Story (secondstory.com)
 //Based upon Windows SDK samples

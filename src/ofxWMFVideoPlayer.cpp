@@ -1,7 +1,7 @@
 //ofxWMFVideoPlayer addon written by Philippe Laulheret for Second Story (secondstory.com)
 //MIT Licensing
 
-#ifdef defined(_MSVC_LANG)
+#ifdef _MSC_VER
 
 #include "ofxWMFVideoPlayerUtils.h"
 #include "ofxWMFVideoPlayer.h"

@@ -14,7 +14,7 @@
 
 #pragma once
 
-#ifdef defined(_MSVC_LANG)
+#ifdef _MSC_VER
 
 //-----------------------------------------------------------------------------
 // SamplePool class

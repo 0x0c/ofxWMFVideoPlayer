@@ -14,7 +14,7 @@
 
 #pragma once
 
-#ifdef defined(_MSVC_LANG)
+#ifdef _MSC_VER
 
 // CLSID of the custom presenter.
 DEFINE_GUID(CLSID_CustomEVRPresenter,
