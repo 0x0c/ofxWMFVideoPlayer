@@ -13,7 +13,7 @@
 
 #pragma once
 
-#ifdef _MSVC_LANG
+#ifdef defined(_MSVC_LANG)
 
 #include "logging.h"
 #include <mfidl.h>
