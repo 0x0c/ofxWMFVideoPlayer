@@ -13,7 +13,6 @@
 class CPlayer;
 class ofxWMFVideoPlayer : public ofBaseVideoPlayer
 {
-
 public:
 	ofxWMFVideoPlayer();
 	~ofxWMFVideoPlayer();
@@ -59,8 +58,8 @@ public:
 
 	bool isLoaded() const;
 
-	const ofPixels &getPixels() const;
-	ofPixels &getPixels();
+	const ofPixels& getPixels() const;
+	ofPixels& getPixels();
 
 	ofPixelFormat getPixelFormat() const;
 	bool isFrameNew() const;
@@ -74,13 +73,18 @@ public:
 
 	void draw(int x, int y, int w, int h);
 	void draw(int x, int y) { draw(x, y, getWidth(), getHeight()); }
+	void drawSubsection(float x, float y, float w, float h, float sx, float sy) const;
+	void drawSubsection(float x, float y, float w, float h, float sx, float sy, float _sw, float _sh) const;
+	void drawSubsection(const ofRectangle& drawBounds, const ofRectangle& subsectionBounds) const;
+	void drawSubsection(float x, float y, float z, float w, float h, float sx, float sy) const;
+	void drawSubsection(float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const;
 
 	void OnPlayerEvent(HWND hwnd, WPARAM pUnkPtr);
 
 	HWND getHandle() { return _hwndPlayer; }
 	LRESULT WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
 
-	ofTexture &getTextureReference()
+	ofTexture& getTextureReference()
 	{
 		if (playerTex == NULL)
 		{
@@ -121,7 +125,7 @@ public:
 	}
 
 private:
-	CPlayer *_player;
+	CPlayer* _player;
 
 	int _id;
 
@@ -144,7 +148,7 @@ private:
 	bool _sharedTextureCreated;
 
 	ofTexture _tex;
-	ofTexture *playerTex;
+	ofTexture* playerTex;
 	ofPixels _pixels;
 
 	BOOL InitInstance();

@@ -6,13 +6,13 @@
 #include "ofxWMFVideoPlayerUtils.h"
 #include "ofxWMFVideoPlayer.h"
 
-typedef std::pair<HWND, ofxWMFVideoPlayer *> PlayerItem;
+typedef std::pair<HWND, ofxWMFVideoPlayer*> PlayerItem;
 list<PlayerItem> g_WMFVideoPlayers;
 
 LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
 // Message handlers
 
-ofxWMFVideoPlayer *findPlayers(HWND hwnd)
+ofxWMFVideoPlayer* findPlayers(HWND hwnd)
 {
 	for (PlayerItem e : g_WMFVideoPlayers)
 	{
@@ -27,7 +27,6 @@ int ofxWMFVideoPlayer::_instanceCount = 0;
 
 ofxWMFVideoPlayer::ofxWMFVideoPlayer() : _player(NULL)
 {
-
 	if (_instanceCount == 0)
 	{
 		if (!ofIsGLProgrammableRenderer())
@@ -168,7 +167,6 @@ bool ofxWMFVideoPlayer::endLoad()
 	_frameRate = 0.0; //reset frameRate as the new movie loaded might have a different value than previous one
 	if (!_sharedTextureCreated)
 	{
-
 		_width = _player->getWidth();
 		_height = _player->getHeight();
 
@@ -181,7 +179,6 @@ bool ofxWMFVideoPlayer::endLoad()
 	{
 		if ((_width != _player->getWidth()) || (_height != _player->getHeight()))
 		{
-
 			_player->m_pEVRPresenter->releaseSharedTexture();
 
 			_width = _player->getWidth();
@@ -197,9 +194,35 @@ bool ofxWMFVideoPlayer::endLoad()
 
 void ofxWMFVideoPlayer::draw(int x, int y, int w, int h)
 {
-
 	_player->m_pEVRPresenter->lockSharedTexture();
 	_tex.draw(x, y, w, h);
+	_player->m_pEVRPresenter->unlockSharedTexture();
+}
+
+void ofxWMFVideoPlayer::drawSubsection(float x, float y, float w, float h, float sx, float sy) const
+{
+	drawSubsection(x, y, 0, w, h, sx, sy, w, h);
+}
+
+void ofxWMFVideoPlayer::drawSubsection(float x, float y, float w, float h, float sx, float sy, float _sw, float _sh) const
+{
+	drawSubsection(x, y, 0, w, h, sx, sy, _sw, _sh);
+}
+
+void ofxWMFVideoPlayer::drawSubsection(const ofRectangle& drawBounds, const ofRectangle& subsectionBounds) const
+{
+	drawSubsection(drawBounds.x, drawBounds.y, 0, drawBounds.width, drawBounds.height, subsectionBounds.x, subsectionBounds.y, subsectionBounds.width, subsectionBounds.height);
+}
+
+void ofxWMFVideoPlayer::drawSubsection(float x, float y, float z, float w, float h, float sx, float sy) const
+{
+	drawSubsection(x, y, z, w, h, sx, sy, w, h);
+}
+
+void ofxWMFVideoPlayer::drawSubsection(float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const
+{
+	_player->m_pEVRPresenter->lockSharedTexture();
+	_tex.drawSubsection(x, y, z, w, h, sx, sy, sw, sh);
 	_player->m_pEVRPresenter->unlockSharedTexture();
 }
 
@@ -258,7 +281,7 @@ bool ofxWMFVideoPlayer::isLoaded() const
 	return ps == PlayerState::Paused || ps == PlayerState::Stopped || ps == PlayerState::Started;
 }
 
-ofPixels &ofxWMFVideoPlayer::getPixels()
+ofPixels& ofxWMFVideoPlayer::getPixels()
 {
 	if (_tex.isAllocated())
 	{
@@ -267,7 +290,7 @@ ofPixels &ofxWMFVideoPlayer::getPixels()
 	return _pixels;
 }
 
-const ofPixels &ofxWMFVideoPlayer::getPixels() const
+const ofPixels& ofxWMFVideoPlayer::getPixels() const
 {
 	/*if (_tex.isAllocated()) {
 		_tex.readToPixels(_pixels);
@@ -300,7 +323,6 @@ void ofxWMFVideoPlayer::setPaused(bool bPause)
 
 void ofxWMFVideoPlayer::play()
 {
-
 	if (!_player)
 		return;
 	if (_player->GetState() == OpenAsyncPending || _player->GetState() == OpenAsyncComplete || _player->GetState() == OpenPending)
@@ -359,7 +381,6 @@ void ofxWMFVideoPlayer::setFrame(int frame)
 
 void ofxWMFVideoPlayer::setVolume(float vol)
 {
-
 	if ((_player) && (_player->GetState() != OpenPending) && (_player->GetState() != Closing) && (_player->GetState() != Closed))
 	{
 		_player->setVolume(vol);
@@ -434,11 +455,11 @@ void ofxWMFVideoPlayer::OnPlayerEvent(HWND hwnd, WPARAM pUnkPtr)
 		FormatMessageW(
 			// use system message tables to retrieve error text
 			FORMAT_MESSAGE_FROM_SYSTEM
-				// allocate buffer on local heap for error text
-				| FORMAT_MESSAGE_ALLOCATE_BUFFER
-				// Important! will fail otherwise, since we're not
-				// (and CANNOT) pass insertion parameters
-				| FORMAT_MESSAGE_IGNORE_INSERTS,
+			// allocate buffer on local heap for error text
+			| FORMAT_MESSAGE_ALLOCATE_BUFFER
+			// Important! will fail otherwise, since we're not
+			// (and CANNOT) pass insertion parameters
+			| FORMAT_MESSAGE_IGNORE_INSERTS,
 			NULL, // unused with FORMAT_MESSAGE_FROM_SYSTEM
 			hr,
 			MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
@@ -457,17 +478,15 @@ void ofxWMFVideoPlayer::OnPlayerEvent(HWND hwnd, WPARAM pUnkPtr)
 
 LRESULT CALLBACK WndProcDummy(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-
 	switch (message)
 	{
-
 	case WM_CREATE:
 	{
 		return DefWindowProc(hwnd, message, wParam, lParam);
 	}
 	default:
 	{
-		ofxWMFVideoPlayer *myPlayer = findPlayers(hwnd);
+		ofxWMFVideoPlayer* myPlayer = findPlayers(hwnd);
 		if (!myPlayer)
 			return DefWindowProc(hwnd, message, wParam, lParam);
 		return myPlayer->WndProc(hwnd, message, wParam, lParam);
@@ -480,7 +499,6 @@ LRESULT ofxWMFVideoPlayer::WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARA
 {
 	switch (message)
 	{
-
 	case WM_DESTROY:
 		PostQuitMessage(0);
 		break;
@@ -522,14 +540,14 @@ BOOL ofxWMFVideoPlayer::InitInstance()
 
 	// Create the application window.
 	hwnd = CreateWindow(szWindowClass, L"", WS_OVERLAPPEDWINDOW,
-						CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, NULL, NULL, NULL, NULL);
+		CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, NULL, NULL, NULL, NULL);
 
 	if (hwnd == 0)
 	{
 		return FALSE;
 	}
 
-	g_WMFVideoPlayers.push_back(std::pair<HWND, ofxWMFVideoPlayer *>(hwnd, this));
+	g_WMFVideoPlayers.push_back(std::pair<HWND, ofxWMFVideoPlayer*>(hwnd, this));
 	HRESULT hr = CPlayer::CreateInstance(hwnd, hwnd, &_player);
 
 	LONG style2 = ::GetWindowLong(hwnd, GWL_STYLE);
